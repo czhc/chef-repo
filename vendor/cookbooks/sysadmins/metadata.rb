@@ -1,5 +1,5 @@
 name "sysadmins"
-maintainer "Bèr `berkes` Kessels"
+maintainer "Ber Kessels"
 maintainer_email "ber@berk.es"
 license "MIT"
 description "Creates sysadmin user accounts"
