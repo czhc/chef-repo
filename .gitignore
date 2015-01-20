@@ -5,7 +5,6 @@ recipes.tgz
 nodes/*.json
 nodes/.gitignore
 !nodes/sample_host.json
-/cookbooks
 /certificates
 /tmp
 .vagrant

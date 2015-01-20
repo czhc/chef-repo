@@ -7,16 +7,6 @@ server {
 
   passenger_enabled on;
   passenger_app_env <%= @rails_env %>;
-
-  location /assets {
-    if ($request_filename ~* ^.*?/([^/]*?)$){
-      set $filename $1;
-    }
-    if ($filename ~* ^.*?\.(eot)|(ttf)|(woff)$){
-      add_header Access-Control-Allow-Origin *;
-    }
-  }
-
   <%= @custom_configuration["server_main"] %>
 }
 
