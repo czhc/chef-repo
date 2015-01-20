@@ -14,7 +14,7 @@ run_list(
 )
 
 default_attributes(
-  "nginx" => { "server_tokens" => "off", "package_name" => "nginx-extras" },
+  "nginx" => { "server_tokens" => "off", "package_name" => "nginx-extras", "client_max_body_size" => "10M" },
   "rbenv" => {
     "group_users" => ['deploy']
   },
