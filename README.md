@@ -1,5 +1,6 @@
-Intercity Chef Recipes
+Intercity Chef Recipe
 ======================
+Forked for personal use. 
 
 [ ![Codeship Status for intercity/chef-repo](https://codeship.io/projects/cca718f0-2e65-0132-1079-2a765a227ada/status)](https://codeship.io/projects/39371)
 
@@ -45,7 +46,7 @@ Clone the repository onto your own workstation. For example in your `~/Code` dir
 
 ```sh
 $ cd ~/Code
-$ git clone git://github.com/intercity/chef-repo.git chef_repo
+$ git clone git://github.com/czhc/chef-repo.git chef_repo
 ```
 
 Run bundle:
@@ -229,7 +230,7 @@ You can check out the sample configuration in file `Vagrantfile`
 These steps should let you **set up or test your own Rails infrastructure
 in 5 - 10 minutes**. If something doesn't work or you need more instructions:
 
-**Please!** [Open an issue](https://github.com/intercity/chef-repo/issues) or email [hello@intercityup.com](mailto:hello@intercityup.com).
+**Please!** [Open an issue](https://github.com/czhc/chef-repo/issues) or email [cedriczhchan@gmail.com](mailto:cedriczhchan@gmail.com).
 
 ## Testing with test-kitchen
 
