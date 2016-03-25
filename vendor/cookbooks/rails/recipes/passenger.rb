@@ -109,6 +109,7 @@ if node[:active_applications]
 
     end
 
+    has_ssl_info = false
     if app_info['ssl_info']
       template "#{applications_root}/#{app}/shared/config/certificate.crt" do
         owner "deploy"
@@ -116,6 +117,7 @@ if node[:active_applications]
         mode 0644
         source "app_cert.crt.erb"
         variables :app_crt=> app_info['ssl_info']['crt']
+        notifies :reload, resources(service: "nginx")
       end
 
       template "#{applications_root}/#{app}/shared/config/certificate.key" do
@@ -124,16 +126,22 @@ if node[:active_applications]
         mode 0644
         source "app_cert.key.erb"
         variables :app_key=> app_info['ssl_info']['key']
+        notifies :reload, resources(service: "nginx")
       end
+      has_ssl_info = true
     end
 
+    enable_ssl = has_ssl_info ||
+      File.exists?("#{applications_root}/#{app}/shared/config/certificate.crt")
     template "/etc/nginx/sites-available/#{app}.conf" do
       source "app_passenger_nginx.conf.erb"
       variables(
         name: app,
         rails_env: rails_env,
         domain_names: app_info["domain_names"],
-        enable_ssl: File.exists?("#{applications_root}/#{app}/shared/config/certificate.crt"),
+        redirect_domain_names: app_info["redirect_domain_names"],
+        client_max_body_size: app_info["client_max_body_size"],
+        enable_ssl: enable_ssl,
         custom_configuration: nginx_custom_configuration(app_info))
       notifies :reload, resources(:service => "nginx")
     end

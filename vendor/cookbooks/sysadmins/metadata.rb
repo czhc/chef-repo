@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 name "sysadmins"
 maintainer "Ber Kessels"
 maintainer_email "ber@berk.es"

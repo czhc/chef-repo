@@ -12,14 +12,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "chef/ubuntu-14.04"
-  # config.vm.box = "chef/ubuntu-12.04"
+  config.vm.box = "bento/ubuntu-14.04"
+  # config.vm.box = "bento/ubuntu-12.04"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
   # config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-
-  config.librarian_chef.cheffile_dir = "./"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -66,7 +64,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider "vmware_fusion" do |v|
-    v.vmx["memsize"] = "1024"
+    v.vmx["memsize"] = "2048"
     v.vmx["numvcpus"] = "2"
   end
   #
@@ -78,6 +76,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "sudo" => {
         "passwordless" => true,
         "users" => ["vagrant"]
+      }
+    },
+    "apt" => {
+      "unattended_upgrades" => {
+        "enabled" => true
       }
     },
     "mysql" => {
@@ -92,7 +95,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     },
     "active_applications" => {
       "intercity_sample_app" => {
-        ruby_version: "2.1.2",
+        ruby_version: "2.2.2",
         domain_names: ["localhost"],
         packages: ["nodejs"],
         rails_env: "staging",

@@ -2,6 +2,49 @@
 All notable changes to this project will be documented in this file.
 This project makes use of the [Sementic Versioning](http://semver.org/)
 
+## Unreleased
+
+### Added
+- Nginx with unicorn respects and uses the "client_max_body_size" configuration similar to nginx for passenger.
+- Set the max db `pool` size via an ENV var called `DB_POOL_SIZE`
+
+### Misc
+- Upgraded to using Chef 12 and bump knife solo gem version.
+
+## 2.5.0 - 2015-04-30
+
+### Added
+- Added the "apt:unattended-upgrades" recipe in our Rails stacks so people can enable unattended upgrades.
+
+## 2.4.0 - 2015-04-28
+
+### Added
+- Ruby 2.1.0, 2.1.5 and 2.2.1 are now installed from binaries
+- Ability to remove an application from your server
+- Allow client_max_body_size configuration per application
+- Sets secure defaults for SSL protocol and ciphers
+
+### Deprecated
+- Nothing
+
+### Removed
+- Nothing
+
+### Fixed
+- Allow redirect domains to be set for the Passenger stack as well
+- Set encoding to utf-8 for sysadmins metadata file
+- Reload NGINX once a certificate has changed
+- Ruby 2.2.x dependency `libffi-dev` is now installed.
+
+### Misc
+- Downgraded to ruby 2.1.5
+
+## 2.3.1 - 2015-02-18
+
+### Fixed
+- Fixed `Mysql2::Error: CREATE command denied to user` issue after `database`
+  cookbook upgrade.
+
 ## 2.3.0 - 2014-12-30
 
 ### Added

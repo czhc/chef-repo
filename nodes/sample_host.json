@@ -1,5 +1,5 @@
 {
-  "run_list":["role[mysql]","role[rails_passenger]", "role[sysadmins]"],
+  "run_list":["role[mysql]","role[remove_applications]", "role[rails_passenger]", "role[sysadmins]"],
   "mysql": {
     "server_debian_password": "<enter a random password>",
     "server_root_password": "<enter a random password>",
@@ -15,9 +15,15 @@
       ]
     }
   },
+  "apt": {
+    "unattended_upgrades": {
+      "enabled": true
+    }
+  },
   "ssh_deploy_keys": [
     "<enter the contents of an id_rsa.pub here>"
   ],
+  "remove_applications": ["<app_name>_<stage>"],
   "backups": {
     "<app_name>_<stage>" : {
       "enabled": true,
@@ -39,6 +45,7 @@
       "domain_names": ["<domain name>", "<domain name>", "<...>"],
       "redirect_domain_names": ["<domain name>", "<domain name>", "<...>"],
       "ruby_version": "2.1.0",
+      "client_max_body_size": "200m",
       "ssl_info": {
         "key": "<ssl key>",
         "crt": "<ssl crt>"
