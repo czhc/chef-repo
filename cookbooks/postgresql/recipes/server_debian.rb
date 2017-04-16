@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 #
-# Cookbook Name:: postgresql
+# Cookbook:: postgresql
 # Recipe:: server
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +16,20 @@
 # limitations under the License.
 #
 
-include_recipe "postgresql::client"
+include_recipe 'postgresql::client'
 
-node['postgresql']['server']['packages'].each do |pg_pack|
+package node['postgresql']['server']['packages']
 
-  package pg_pack
+include_recipe 'postgresql::server_conf'
 
+service 'postgresql' do
+  service_name node['postgresql']['server']['service_name']
+  supports restart: true, status: true, reload: true
+  action [:enable, :start]
 end
 
-include_recipe "postgresql::server_conf"
-
-service "postgresql" do
-  service_name node['postgresql']['server']['service_name']
-  supports :restart => true, :status => true, :reload => true
-  action [:enable, :start]
+execute 'Set locale and Create cluster' do
+  command 'export LC_ALL=C; /usr/bin/pg_createcluster --start ' + node['postgresql']['version'] + ' main'
+  action :run
+  not_if { ::File.directory?('/etc/postgresql/' + node['postgresql']['version'] + '/main') }
 end

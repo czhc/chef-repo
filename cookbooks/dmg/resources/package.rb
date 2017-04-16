@@ -1,8 +1,8 @@
 # Encoding: utf-8
-# Cookbook Name:: dmg
+# Cookbook:: dmg
 # Resource:: package
 #
-# Copyright 2011, Joshua Timberman
+# Copyright:: 2011-2017, Joshua Timberman
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@
 #
 actions :install
 
-attribute :app, :kind_of => String, :name_attribute => true
-attribute :source, :kind_of => String, :default => nil
-attribute :owner, :kind_of => String, :default => nil
-attribute :destination, :kind_of => String, :default => "/Applications"
-attribute :checksum, :kind_of => String, :default => nil
-attribute :volumes_dir, :kind_of => String, :default => nil
-attribute :dmg_name, :kind_of => String, :default => nil
-attribute :type, :kind_of => String, :default => 'app'
-attribute :installed, :kind_of => [TrueClass, FalseClass], :default => false
-attribute :package_id, :kind_of => String, :default => nil
-attribute :dmg_passphrase, :kind_of => String, :default => nil
-attribute :accept_eula, :kind_of => [TrueClass, FalseClass], :default => false
+attribute :app, kind_of: String, name_attribute: true
+attribute :source, kind_of: String, default: nil
+attribute :file, kind_of: String, default: nil
+attribute :owner, kind_of: String, default: nil
+attribute :destination, kind_of: String, default: '/Applications'
+attribute :checksum, kind_of: String, default: nil
+attribute :volumes_dir, kind_of: String, default: nil
+attribute :dmg_name, kind_of: String, default: nil
+attribute :type, kind_of: String, default: 'app'
+attribute :installed, kind_of: [TrueClass, FalseClass], default: false
+attribute :package_id, kind_of: String, default: nil
+attribute :dmg_passphrase, kind_of: String, default: nil
+attribute :accept_eula, kind_of: [TrueClass, FalseClass], default: false
+attribute :headers, kind_of: Hash, default: nil
 
 def initialize(name, run_context = nil)
   super
