@@ -11,6 +11,7 @@ cookbook "rbenv", "~> 1.7.1"
 cookbook "ruby_build", "~> 1.1.0"
 cookbook "redisio", "2.5.0"
 # cookbook "nvm", "0.1.7"
+cookbook 'elasticsearch', '~> 3.4.1'
 
 # Our own cookbooks from vendor/
 cookbook "packages", path: "vendor/cookbooks/packages"
