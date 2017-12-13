@@ -18,16 +18,12 @@
 #
 
 packages = value_for_platform_family(
-  %w(rhel) => node['nginx']['passenger']['packages']['rhel'],
+  %w(rhel amazon) => node['nginx']['passenger']['packages']['rhel'],
   %w(fedora) => node['nginx']['passenger']['packages']['fedora'],
   %w(debian) => node['nginx']['passenger']['packages']['debian']
 )
 
-unless packages.empty?
-  packages.each do |name|
-    package name
-  end
-end
+package packages unless packages.empty?
 
 gem_package 'rake' if node['nginx']['passenger']['install_rake']
 

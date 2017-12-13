@@ -12,7 +12,7 @@ SITE
       mingw (>= 1.1)
       seven_zip (>= 0.0.0)
     chef-sugar (3.4.0)
-    chef_nginx (6.0.1)
+    chef_nginx (6.2.0)
       build-essential (>= 0.0.0)
       compat_resource (>= 12.16.3)
       ohai (>= 4.1.0)
@@ -117,7 +117,7 @@ PATH
 DEPENDENCIES
   apt (~> 6.1.0)
   backups (>= 0)
-  chef_nginx (~> 6.0.1)
+  chef_nginx (~> 6.2.0)
   elasticsearch (~> 3.4.1)
   mysql (~> 8.3.1)
   nvm (>= 0)

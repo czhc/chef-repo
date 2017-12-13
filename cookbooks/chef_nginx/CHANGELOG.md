@@ -2,6 +2,36 @@
 
 This file is used to list changes made in each version of the nginx cookbook.
 
+## 6.2.0 (2017-09-12)
+
+- Install basic configuration before starting the nginx service
+- Correct documentation for `rate_limiting_backoff` attribute
+- Phusion Passenger distro has pid file location in /run/nginx.pid
+- [GH-92] add a test suite for passenger install
+- Swap the maintainer files for a readme section
+- Update nginx version [1.12.1] and checksum attributes for source installs
+- Update versions and checksums for lua-nginx-module and echo-nginx-module
+- Simplify repo logic and use HTTPS repos
+
+## 6.1.1 (2017-06-08)
+
+- Use multipackage installs in the pagespeed recipe to speed things up
+- Several fixes for Amazon Linux on Chef 13+
+
+## 6.1.0 (2017-06-07)
+
+- Add attributes for setting the repository URLs
+- Fix support for Amazon Linux repos on Chef 13+
+
+
+## 6.0.3 (2017-06-05)
+
+- Correctly compare nginx versions with multiple digits so 1.10 is properly recognized as coming after 1.2.
+
+## 6.0.2 (2017-04-27)
+
+- Resolve name conflicts in the resource 
+
 ## 6.0.1 (2017-04-04)
 
 - double quotes are unnecessary in lua configure flags

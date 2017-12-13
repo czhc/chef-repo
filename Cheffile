@@ -4,7 +4,7 @@ site 'https://supermarket.chef.io/api/v1'
 cookbook "apt", "~> 6.1.0"
 cookbook "mysql", "~> 8.3.1"
 cookbook "postgresql", "~> 6.1.1"
-cookbook "chef_nginx","~> 6.0.1"
+cookbook "chef_nginx","~> 6.2.0"
 cookbook "postfix", "~> 3.6.2"
 cookbook "sudo", "~> 3.3.1"
 cookbook "rbenv", "~> 1.7.1"

@@ -22,7 +22,7 @@
 
 # In order to update the version, the checksum attribute must be changed too.
 # This attribute is defined in the source.rb attribute file
-default['nginx']['version']      = '1.10.3'
+default['nginx']['version']      = '1.12.1'
 default['nginx']['package_name'] = 'nginx'
 default['nginx']['port']         = '80'
 default['nginx']['dir']          = '/etc/nginx'
@@ -41,12 +41,8 @@ default['nginx']['repo_source']    = 'nginx'
 default['nginx']['install_method'] = 'package'
 
 case node['platform_family']
-when 'debian'
-  default['nginx']['user'] = 'www-data'
-when 'rhel'
-  default['nginx']['user']        = 'nginx'
-when 'fedora'
-  default['nginx']['user']        = 'nginx'
+when 'rhel', 'fedora', 'amazon'
+  default['nginx']['user'] = 'nginx'
 when 'freebsd'
   default['nginx']['package_name'] = 'www/nginx'
   default['nginx']['user']         = 'www'
@@ -57,7 +53,7 @@ when 'freebsd'
 when 'suse'
   default['nginx']['user']       = 'wwwrun'
   default['nginx']['group']      = 'www'
-else
+else # debian probably
   default['nginx']['user']       = 'www-data'
 end
 
