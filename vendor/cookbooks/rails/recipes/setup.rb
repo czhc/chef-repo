@@ -3,7 +3,7 @@ user "deploy" do
   home "/home/deploy"
   shell "/bin/bash"
 
-  supports(:manage_home => true )
+  manage_home true
 end
 
 group "deploy" do
@@ -17,7 +17,7 @@ if node[:deploy_users]
       home "/home/#{deploy_user}"
       shell "/bin/bash"
 
-      supports(:manage_home => true )
+      manage_home true
     end
 
     group deploy_user do
