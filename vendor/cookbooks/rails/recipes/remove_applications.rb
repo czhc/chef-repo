@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 applications_root = node[:rails][:applications_root]
 
-include_recipe "nginx"
+include_recipe "chef_nginx"
 
 if node[:remove_applications]
   node[:remove_applications].each do |app|
