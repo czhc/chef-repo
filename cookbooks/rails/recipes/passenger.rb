@@ -32,7 +32,7 @@ apt_repository "passenger" do
   keyserver "keyserver.ubuntu.com"
 end
 
-include_recipe "nginx"
+include_recipe "chef_nginx"
 
 template "/etc/nginx/conf.d/passenger.conf" do
   source "passenger.conf.erb"
