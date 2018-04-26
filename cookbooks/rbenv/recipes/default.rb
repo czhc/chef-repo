@@ -81,7 +81,7 @@ end
 user node[:rbenv][:user] do
   shell "/bin/bash"
   group node[:rbenv][:group]
-  manage_home node[:rbenv][:manage_home]
+  supports :manage_home => node[:rbenv][:manage_home]
   home node[:rbenv][:user_home]
 end
 

@@ -1,8 +1,9 @@
-# Cookbook Name:: nginx
+#
+# Cookbook:: nginx
 # Recipe:: repo
 # Author:: Nick Rycar <nrycar@bluebox.net>
 #
-# Copyright 2008-2012, Opscode, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,28 +16,38 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 case node['platform_family']
-when "rhel","fedora"
-  include_recipe "yum"
+when 'rhel', 'amazon'
 
-  yum_key "nginx" do
-    url 'http://nginx.org/keys/nginx_signing.key'
-    action :add
+  yum_repository 'nginx' do
+    description  'Nginx.org Repository'
+    baseurl      node['nginx']['upstream_repository']
+    gpgkey       node['nginx']['repo_signing_key']
+    action       :create
   end
 
-  yum_repository "nginx" do
-    description "Nginx.org Repository"
-    url node['nginx']['upstream_repository']
-  end
-when "debian"
-  include_recipe "apt"
+when 'suse'
 
-  apt_repository "nginx" do
+  zypper_repo 'nginx' do
+    repo_name 'Nginx.org Repository'
     uri node['nginx']['upstream_repository']
+    key node['nginx']['repo_signing_key']
+  end
+
+when 'debian'
+
+  apt_repository 'nginx' do
+    uri          node['nginx']['upstream_repository']
     distribution node['lsb']['codename']
-    components ["nginx"]
-    deb_src true
-    key 'http://nginx.org/keys/nginx_signing.key'
+    components   %w(nginx)
+    deb_src      true
+    key          node['nginx']['repo_signing_key']
+  end
+
+else
+  log "nginx.org does not maintain packages for platform #{node['platform']}. Cannot setup the upstream repo!" do
+    level :warn
   end
 end

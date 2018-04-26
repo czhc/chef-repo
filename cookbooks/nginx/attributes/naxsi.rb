@@ -1,10 +1,10 @@
 #
-# Cookbook Name:: nginx
+# Cookbook:: nginx
 # Attributes:: naxsi
 #
 # Author:: Artiom Lunev (<artiom.lunev@gmail.com>)
 #
-# Copyright 2012, Artiom Lunev
+# Copyright:: 2012-2017, Artiom Lunev
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,6 @@
 # limitations under the License.
 #
 
-default['nginx']['naxsi']['version']  = "0.49"
-default['nginx']['naxsi']['url']      = "http://naxsi.googlecode.com/files/naxsi-core-#{node['nginx']['naxsi']['version']}.tgz"
-default['nginx']['naxsi']['checksum'] = "bb0b63713d5a9446401d5acd1ef0882b9c2a0fc506502bbd88bc4663d273e9c7"
+default['nginx']['naxsi']['version'] = '0.54'
+default['nginx']['naxsi']['url'] = "https://github.com/nbs-system/naxsi/archive/#{node['nginx']['naxsi']['version']}.tar.gz"
+default['nginx']['naxsi']['checksum'] = '9cc2c09405bc71f78ef26a8b6d70afcea3fccbe8125df70cb0cfc480133daba5'

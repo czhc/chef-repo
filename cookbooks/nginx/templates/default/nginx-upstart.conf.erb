@@ -2,17 +2,17 @@
 
 description "nginx http daemon"
 
-start on (local-filesystems and net-device-up IFACE=lo and runlevel [<%= @runlevels %>])
-stop on runlevel [!<%= @runlevels %>]
+start on (local-filesystems and net-device-up IFACE=lo and runlevel [<%= node['nginx']['upstart']['runlevels'] %>])
+stop on runlevel [!<%= node['nginx']['upstart']['runlevels'] %>]
 
-env DAEMON=<%= @src_binary %>
-env PID=<%= @pid %>
-env CONFIG=<%= @config %>
+env DAEMON=<%= node['nginx']['binary'] %>
+env PID=<%= @pid_file %>
+env CONFIG=<%= node['nginx']['source']['conf_path'] %>
 
 respawn
-<% if @respawn_limit %>
-respawn limit <%= @respawn_limit %>
-<% end %>
+<% if node['nginx']['upstart']['respawn_limit'] -%>
+respawn limit <%= node['nginx']['upstart']['respawn_limit'] %>
+<% end -%>
 
 pre-start script
   ${DAEMON} -t
@@ -21,20 +21,19 @@ pre-start script
   fi
 end script
 
-<% unless @foreground %>
+<% unless node['nginx']['upstart']['foreground'] -%>
 expect fork
-<% else %>
+<% else -%>
 console output
-<% end %>
+<% end -%>
 
 exec ${DAEMON} -c "${CONFIG}"
 
-<% if node.recipe?('nginx::passenger') and not @foreground %>
+<% if node.recipe?('nginx::passenger') && !node['nginx']['upstart']['foreground'] -%>
 # classic example of why pidfiles should have gone away
 # with the advent of fork().  we missed that bus a long
 # time ago so hack around it.
 post-stop script
   start-stop-daemon --stop --pidfile ${PID} --name nginx --exec ${DAEMON} --signal QUIT
 end script
-<% end %>
-
+<% end -%>

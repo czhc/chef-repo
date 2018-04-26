@@ -1,12 +1,12 @@
 #
-# Cookbook Name:: nginx
+# Cookbook:: nginx
 # Recipe:: source
 #
-# Author:: Adam Jacob (<adam@opscode.com>)
-# Author:: Joshua Timberman (<joshua@opscode.com>)
+# Author:: Adam Jacob (<adam@chef.io>)
+# Author:: Joshua Timberman (<joshua@chef.io>)
 # Author:: Jamie Winsor (<jamie@vialstudios.com>)
 #
-# Copyright 2009-2012, Opscode, Inc.
+# Copyright:: 2009-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,76 +21,76 @@
 # limitations under the License.
 #
 
-# This is for Chef 10 and earlier where attributes aren't loaded
-# deterministically (resolved in Chef 11).
-node.load_attribute_by_short_filename('source', 'nginx') if node.respond_to?(:load_attribute_by_short_filename)
+raise "#{node['platform']} is not a supported platform in the nginx::source recipe" unless platform_family?('rhel', 'amazon', 'fedora', 'debian', 'suse')
 
-nginx_url = node['nginx']['source']['url'] ||
-  "http://nginx.org/download/nginx-#{node['nginx']['source']['version']}.tar.gz"
-
-node.set['nginx']['binary']          = node['nginx']['source']['sbin_path']
-node.set['nginx']['daemon_disable']  = true
+node.normal['nginx']['binary'] = node['nginx']['source']['sbin_path']
+node.normal['nginx']['daemon_disable'] = true
 
 user node['nginx']['user'] do
   system true
-  shell "/bin/false"
-  home "/var/www"
+  shell  '/bin/false'
+  home   '/var/www'
+  not_if { node['nginx']['source']['use_existing_user'] }
 end
 
-include_recipe "nginx::ohai_plugin"
-include_recipe "nginx::commons_dir"
-include_recipe "nginx::commons_script"
-include_recipe "build-essential"
+include_recipe 'nginx::ohai_plugin'
+include_recipe 'nginx::commons_dir'
+include_recipe 'nginx::commons_script'
+include_recipe 'build-essential::default'
 
-src_filepath  = "#{Chef::Config['file_cache_path'] || '/tmp'}/nginx-#{node['nginx']['source']['version']}.tar.gz"
-packages = value_for_platform(
-    ["centos","redhat","fedora","amazon","scientific"] => {'default' => ['pcre-devel', 'openssl-devel']},
-    "gentoo" => {"default" => []},
-    "default" => ['libpcre3', 'libpcre3-dev', 'libssl-dev']
-  )
+src_filepath = "#{Chef::Config['file_cache_path']}/nginx-#{node['nginx']['source']['version']}.tar.gz"
 
-packages.each do |devpkg|
-  package devpkg
-end
+# install prereqs
+package value_for_platform_family(
+  %w(rhel fedora amazon) => %w(pcre-devel openssl-devel tar zlib-devel),
+  %w(suse) => %w(pcre-devel libopenssl-devel tar),
+  %w(debian) => %w(libpcre3 libpcre3-dev libssl-dev tar zlib1g-dev)
+)
 
-remote_file nginx_url do
-  source nginx_url
+remote_file 'nginx source' do
+  source   node['nginx']['source']['url']
   checksum node['nginx']['source']['checksum']
-  path src_filepath
-  backup false
+  path     src_filepath
+  backup   false
+  retries  4
 end
 
 node.run_state['nginx_force_recompile'] = false
 node.run_state['nginx_configure_flags'] =
   node['nginx']['source']['default_configure_flags'] | node['nginx']['configure_flags']
+node.run_state['nginx_source_env'] = {}
 
-include_recipe "nginx::commons_conf"
+include_recipe 'nginx::commons_conf'
 
 cookbook_file "#{node['nginx']['dir']}/mime.types" do
-  source "mime.types"
-  owner "root"
-  group "root"
-  mode 00644
-  notifies :reload, 'service[nginx]'
+  source 'mime.types'
+  notifies :reload, 'service[nginx]', :delayed
+end
+
+# Unpack downloaded source so we could apply nginx patches
+# in custom modules - example http://yaoweibin.github.io/nginx_tcp_proxy_module/
+# patch -p1 < /path/to/nginx_tcp_proxy_module/tcp.patch
+bash 'unarchive_source' do
+  cwd  ::File.dirname(src_filepath)
+  code <<-EOH
+    tar zxf #{::File.basename(src_filepath)} -C #{::File.dirname(src_filepath)} --no-same-owner
+  EOH
+  not_if { ::File.directory?("#{Chef::Config['file_cache_path'] || '/tmp'}/nginx-#{node['nginx']['source']['version']}") }
 end
 
 node['nginx']['source']['modules'].each do |ngx_module|
-  include_recipe "nginx::#{ngx_module}"
-end
-
-node['nginx']['source']['extra_modules'].each do |ngx_module|
   include_recipe ngx_module
 end
 
-configure_flags = node.run_state['nginx_configure_flags']
+configure_flags       = node.run_state['nginx_configure_flags']
 nginx_force_recompile = node.run_state['nginx_force_recompile']
 
-bash "compile_nginx_source" do
-  cwd ::File.dirname(src_filepath)
+bash 'compile_nginx_source' do
+  cwd  ::File.dirname(src_filepath)
+  environment node.run_state['nginx_source_env']
   code <<-EOH
-    tar zxf #{::File.basename(src_filepath)} -C #{::File.dirname(src_filepath)} &&
     cd nginx-#{node['nginx']['source']['version']} &&
-    ./configure #{node.run_state['nginx_configure_flags'].join(" ")} &&
+    ./configure #{node.run_state['nginx_configure_flags'].join(' ')} &&
     make && make install
   EOH
 
@@ -101,106 +101,70 @@ bash "compile_nginx_source" do
       node.automatic_attrs['nginx']['configure_arguments'].sort == configure_flags.sort
   end
 
-  notifies :restart, "service[nginx]"
+  notifies :restart, 'service[nginx]'
+  notifies :reload,  'ohai[reload_nginx]', :immediately
 end
 
 case node['nginx']['init_style']
-when "runit"
-  node.set['nginx']['src_binary'] = node['nginx']['binary']
-  include_recipe "runit"
-
-  runit_service "nginx"
-
-  service "nginx" do
-    supports :status => true, :restart => true, :reload => true
-    reload_command "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/nginx"
-  end
-when "bluepill"
-  include_recipe "bluepill"
-
-  template "#{node['bluepill']['conf_dir']}/nginx.pill" do
-    source "nginx.pill.erb"
-    mode 00644
-    variables(
-      :working_dir => node['nginx']['source']['prefix'],
-      :src_binary => node['nginx']['binary'],
-      :nginx_dir => node['nginx']['dir'],
-      :log_dir => node['nginx']['log_dir'],
-      :pid => node['nginx']['pid']
-    )
-  end
-
-  bluepill_service "nginx" do
-    action [ :enable, :load ]
-  end
-
-  service "nginx" do
-    supports :status => true, :restart => true, :reload => true
-    reload_command "[[ -f #{node['nginx']['pid']} ]] && kill -HUP `cat #{node['nginx']['pid']}` || true"
-    action :nothing
-  end
 when 'upstart'
   # we rely on this to set up nginx.conf with daemon disable instead of doing
   # it in the upstart init script.
-  node.set['nginx']['daemon_disable']  = node['nginx']['upstart']['foreground']
+  node.normal['nginx']['daemon_disable'] = node['nginx']['upstart']['foreground']
 
   template '/etc/init/nginx.conf' do
     source 'nginx-upstart.conf.erb'
-    owner 'root'
-    group 'root'
-    mode 00644
-    variables(
-      :src_binary => node['nginx']['binary'],
-      :pid => node['nginx']['pid'],
-      :config => node['nginx']['source']['conf_path'],
-      :foreground => node['nginx']['upstart']['foreground'],
-      :respawn_limit => node['nginx']['upstart']['respawn_limit'],
-      :runlevels => node['nginx']['upstart']['runlevels']
-    )
+    variables(lazy { { pid_file: pidfile_location } })
   end
 
-  service "nginx" do
+  service 'nginx' do
     provider Chef::Provider::Service::Upstart
-    supports :status => true, :restart => true, :reload => true
-    action :nothing
+    supports status: true, restart: true, reload: true
+    action   [:start, :enable]
+  end
+when 'systemd'
+
+  systemd_prefix = platform_family?('suse') ? '/usr/lib' : '/lib'
+
+  template "#{systemd_prefix}/systemd/system/nginx.service" do
+    source 'nginx.service.erb'
+  end
+
+  service 'nginx' do
+    provider Chef::Provider::Service::Systemd
+    supports status: true, restart: true, reload: true
+    action   [:start, :enable]
   end
 else
-  node.set['nginx']['daemon_disable'] = false
+  node.normal['nginx']['daemon_disable'] = false
 
-  template "/etc/init.d/nginx" do
-    source "nginx.init.erb"
-    owner "root"
-    group "root"
-    mode 00755
-    variables(
-      :src_binary => node['nginx']['binary'],
-      :pid => node['nginx']['pid']
-    )
-  end
+  generate_init = true
 
   case node['platform']
-  when 'gentoo'
-    genrate_template = false
   when 'debian', 'ubuntu'
-    genrate_template = true
-    defaults_path = '/etc/default/nginx'
+    generate_template = true
+    defaults_path     = '/etc/default/nginx'
+  when 'freebsd'
+    generate_init     = false
   else
-    genrate_template = true
-    defaults_path = '/etc/sysconfig/nginx'
+    generate_template = true
+    defaults_path     = '/etc/sysconfig/nginx'
   end
 
-  if genrate_template
+  template '/etc/init.d/nginx' do
+    source 'nginx.init.erb'
+    mode   '0755'
+    variables(lazy { { pid_file: pidfile_location } })
+  end if generate_init
+
+  if generate_template # ~FC023
     template defaults_path do
-      source "nginx.sysconfig.erb"
-      owner "root"
-      group "root"
-      mode 00644
+      source 'nginx.sysconfig.erb'
     end
   end
 
-  service "nginx" do
-    supports :status => true, :restart => true, :reload => true
-    action :enable
+  service 'nginx' do
+    supports status: true, restart: true, reload: true
+    action   [:start, :enable]
   end
 end
 
