@@ -42,11 +42,6 @@ SITE
       build-essential (>= 2.0.0)
       compat_resource (>= 12.16.3)
       openssl (>= 4.0)
-    rbenv (1.7.1)
-      apt (>= 0.0.0)
-      build-essential (>= 0.0.0)
-      git (>= 0.0.0)
-      ohai (>= 1.1)
     redisio (2.5.0)
       build-essential (>= 0.0.0)
       ulimit (>= 0.1.2)
@@ -92,6 +87,15 @@ PATH
       sudo (> 1.2.0)
 
 PATH
+  remote: vendor/cookbooks/rbenv
+  specs:
+    rbenv (1.7.1)
+      apt (>= 0.0.0)
+      build-essential (>= 0.0.0)
+      git (>= 0.0.0)
+      ohai (>= 1.1)
+
+PATH
   remote: vendor/cookbooks/ssh_deploy_keys
   specs:
     ssh_deploy_keys (0.1.0)
@@ -112,6 +116,7 @@ DEPENDENCIES
   postfix (~> 3.6.2)
   postgresql (~> 6.1.1)
   rails (>= 0)
+  rbenv (>= 0)
   redisio (= 2.5.0)
   ruby_build (~> 1.1.0)
   ssh_deploy_keys (>= 0)
