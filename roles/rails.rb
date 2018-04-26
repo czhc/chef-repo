@@ -8,6 +8,7 @@ run_list(
   "recipe[ruby_build]",
   "recipe[rbenv]",
   "recipe[rails::databases]",
+  "recipe[rails::env_vars]",
   "recipe[git]",
   "recipe[ssh_deploy_keys]",
   "recipe[postfix]",
