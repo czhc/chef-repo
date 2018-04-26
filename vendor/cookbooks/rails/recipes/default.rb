@@ -154,7 +154,6 @@ if node[:active_applications]
       path ["#{applications_root}/#{app}/current/log/*.log"]
       frequency "daily"
       rotate 14
-      compress true
       create "644 #{deploy_user} #{deploy_user}"
     end
 
