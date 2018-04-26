@@ -8,7 +8,7 @@ run_list(
   "recipe[ssh_deploy_keys]",
   "recipe[postfix]",
   "recipe[apt::unattended-upgrades]",
-  "recipe[chef_nginx]"
+  "recipe[nginx]"
 )
 
 default_attributes(
