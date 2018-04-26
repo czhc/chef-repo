@@ -112,7 +112,6 @@ DEPENDENCIES
   postfix (~> 3.6.2)
   postgresql (~> 6.1.1)
   rails (>= 0)
-  rbenv (~> 1.7.1)
   redisio (= 2.5.0)
   ruby_build (~> 1.1.0)
   ssh_deploy_keys (>= 0)
