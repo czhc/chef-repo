@@ -76,7 +76,7 @@ when 'debian'
   default['postgresql']['server']['service_name'] = 'postgresql'
 
 when 'ubuntu'
-
+  puts "FOO"
   if node['platform_version'].to_f <= 13.10
     default['postgresql']['version'] = '9.1'
     default['postgresql']['dir'] = '/etc/postgresql/9.1/main'
@@ -102,8 +102,8 @@ when 'ubuntu'
     default['postgresql']['version'] = '9.5'
     default['postgresql']['dir'] = '/etc/postgresql/9.5/main'
     default['postgresql']['server']['service_name'] = 'postgresql'
-    default['postgresql']['client']['packages'] = ['postgresql-client-9.1', 'libpq-dev', 'postgresql-dev']
-    default['postgresql']['server']['packages'] = ['postgresql-9.5']
+    default['postgresql']['client']['packages'] = ['postgresql-client-9.5','libpq-dev']
+    default['postgresql']['server']['packages'] = ['postgresql-9.5','postgresql-server-dev-9.5']
     default['postgresql']['contrib']['packages'] = ['postgresql-contrib-9.5']
   end
 
