@@ -1,4 +1,4 @@
-include_recipe "database::postgres"
+include_recipe "database::postgresql"
 
 if node[:active_applications]
   node[:active_applications].each do |app, app_info|
