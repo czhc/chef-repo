@@ -1,6 +1,6 @@
 Intercity Chef Recipe
 ======================
-Forked for personal use. 
+Forked to support Chef 13 and fix all broken recipes.
 
 [ ![Codeship Status for intercity/chef-repo](https://codeship.io/projects/cca718f0-2e65-0132-1079-2a765a227ada/status)](https://codeship.io/projects/39371)
 
@@ -30,6 +30,7 @@ on a single server or multiple servers:
 
 * Ubuntu 12.04 LTS
 * Ubuntu 14.04 LTS
+* Ubuntu 16.06 LTS
 
 ### Databases
 
